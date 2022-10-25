@@ -3,7 +3,7 @@ package com.tools.entity;
 import lombok.Data;
 
 @Data
-public class MatchMilepostModelEntity extends SqlModelGeneralFieldEntity{
+public class MatchMilepostModel extends SqlModelGeneralFieldEntity{
 
     /**
      * 跟踪计划总线模板uuid

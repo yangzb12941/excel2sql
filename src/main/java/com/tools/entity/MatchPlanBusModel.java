@@ -3,7 +3,7 @@ package com.tools.entity;
 import lombok.Data;
 
 @Data
-public class MatchPlanBusModelEntity extends SqlModelGeneralFieldEntity{
+public class MatchPlanBusModel extends SqlModelGeneralFieldEntity{
 
     /**
      * 伤情

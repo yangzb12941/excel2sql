@@ -1,8 +1,8 @@
 package com.tools.utils;
 
 import com.alibaba.excel.context.AnalysisContext;
-import com.tools.entity.MatchMilepostModelEntity;
-import com.tools.entity.MatchPlanBusModelEntity;
+import com.tools.entity.MatchMilepostModel;
+import com.tools.entity.MatchPlanBusModel;
 import com.tools.excelCell.TrackingPolicyExcelCell;
 import com.tools.sqlWriter.SqlWriter2Txt;
 import org.slf4j.Logger;
@@ -53,13 +53,13 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
     @Override
     public void doSomething() {
         List<TrackingPolicyExcelCell> excelCellList = excelDataToDaoModel();
-        HashMap<MatchPlanBusModelEntity, List<MatchMilepostModelEntity>> matchPlanBusModelEntityListHashMap = creatMatchPlanBusModelEntity(excelCellList);
-        List<MatchPlanBusModelEntity> matchPlanBusModelEntityList = new ArrayList<>(matchPlanBusModelEntityListHashMap.size());
-        for (Map.Entry<MatchPlanBusModelEntity, List<MatchMilepostModelEntity>> entity : matchPlanBusModelEntityListHashMap.entrySet()) {
+        HashMap<MatchPlanBusModel, List<MatchMilepostModel>> matchPlanBusModelEntityListHashMap = creatMatchPlanBusModelEntity(excelCellList);
+        List<MatchPlanBusModel> matchPlanBusModelList = new ArrayList<>(matchPlanBusModelEntityListHashMap.size());
+        for (Map.Entry<MatchPlanBusModel, List<MatchMilepostModel>> entity : matchPlanBusModelEntityListHashMap.entrySet()) {
             sqlWriter2Txt.writer2Text(entity.getValue(),sqlTemplate_2);
-            matchPlanBusModelEntityList.add(entity.getKey());
+            matchPlanBusModelList.add(entity.getKey());
         }
-        sqlWriter2Txt.writer2Text(matchPlanBusModelEntityList,sqlTemplate_1);
+        sqlWriter2Txt.writer2Text(matchPlanBusModelList,sqlTemplate_1);
     }
 
     private List<TrackingPolicyExcelCell> excelDataToDaoModel(){
@@ -91,11 +91,11 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
     }
 
 
-    private HashMap<MatchPlanBusModelEntity,List<MatchMilepostModelEntity>> creatMatchPlanBusModelEntity(List<TrackingPolicyExcelCell> excelCellList){
-        HashMap<MatchPlanBusModelEntity,List<MatchMilepostModelEntity>> mpbModels = new HashMap<MatchPlanBusModelEntity,List<MatchMilepostModelEntity>>(excelCellList.size());
+    private HashMap<MatchPlanBusModel,List<MatchMilepostModel>> creatMatchPlanBusModelEntity(List<TrackingPolicyExcelCell> excelCellList){
+        HashMap<MatchPlanBusModel,List<MatchMilepostModel>> mpbModels = new HashMap<MatchPlanBusModel,List<MatchMilepostModel>>(excelCellList.size());
         for (TrackingPolicyExcelCell cell:excelCellList) {
-            List<MatchMilepostModelEntity> mmmEntitys= new ArrayList<MatchMilepostModelEntity>(8);
-            MatchPlanBusModelEntity mpbModel = new MatchPlanBusModelEntity();
+            List<MatchMilepostModel> mmmEntitys= new ArrayList<MatchMilepostModel>(8);
+            MatchPlanBusModel mpbModel = new MatchPlanBusModel();
             mpbModel.setUuid(UUID.randomUUID().toString().replace("-",""));
             //是否有巡航跟踪
             mpbModel.setHaveCruiseTrack(0);
@@ -119,7 +119,7 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
                 //基础诊断编码
                 mpbModel.setBasicDiagnosisCode(null);
                 //治疗方案:手术治疗、保守治疗
-                mpbModel.setTreatmentPlan("保守治疗");
+                mpbModel.setTreatmentPlan(cell.getDiagnosisPlan());
             }else{
                 //基础诊断
                 mpbModel.setBasicDiagnosis(cell.getBasicDiagnosis());
@@ -128,14 +128,14 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
                 //伤情
                 mpbModel.setInjuryCondition(cell.getInjuryDescription());
                 //诊疗方式
-                mpbModel.setDiagnosisPlan(cell.getDiagnosisPlan());
+                mpbModel.setDiagnosisPlan(null);
                 //治疗方案
-                mpbModel.setTreatmentPlan(null);
+                mpbModel.setTreatmentPlan(cell.getDiagnosisPlan());
                 //是否通用跟踪策略
                 mpbModel.setIsDefaultBus(0);
             }
             if(Objects.nonNull(cell.getFirstTracking())){
-                MatchMilepostModelEntity mmmEntity = new MatchMilepostModelEntity();
+                MatchMilepostModel mmmEntity = new MatchMilepostModel();
                 mmmEntity.setUuid(UUID.randomUUID().toString().replace("-",""));
                 mmmEntity.setMatchPlanBusModelCode(mpbModel.getUuid());
                 mmmEntity.setTrackOrder(1);
@@ -153,7 +153,7 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
             }
 
             if(Objects.nonNull(cell.getSecondTracking())){
-                MatchMilepostModelEntity mmmEntity = new MatchMilepostModelEntity();
+                MatchMilepostModel mmmEntity = new MatchMilepostModel();
                 mmmEntity.setUuid(UUID.randomUUID().toString().replace("-",""));
                 mmmEntity.setMatchPlanBusModelCode(mpbModel.getUuid());
                 mmmEntity.setTrackOrder(2);
@@ -171,7 +171,7 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
             }
 
             if(Objects.nonNull(cell.getThirdTracking())){
-                MatchMilepostModelEntity mmmEntity = new MatchMilepostModelEntity();
+                MatchMilepostModel mmmEntity = new MatchMilepostModel();
                 mmmEntity.setUuid(UUID.randomUUID().toString().replace("-",""));
                 mmmEntity.setMatchPlanBusModelCode(mpbModel.getUuid());
                 mmmEntity.setTrackOrder(3);
@@ -189,7 +189,7 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
             }
 
             if(Objects.nonNull(cell.getFourthTracking())){
-                MatchMilepostModelEntity mmmEntity = new MatchMilepostModelEntity();
+                MatchMilepostModel mmmEntity = new MatchMilepostModel();
                 mmmEntity.setUuid(UUID.randomUUID().toString().replace("-",""));
                 mmmEntity.setMatchPlanBusModelCode(mpbModel.getUuid());
                 mmmEntity.setTrackOrder(4);
@@ -207,7 +207,7 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
             }
 
             if(Objects.nonNull(cell.getFifthTracking())){
-                MatchMilepostModelEntity mmmEntity = new MatchMilepostModelEntity();
+                MatchMilepostModel mmmEntity = new MatchMilepostModel();
                 mmmEntity.setUuid(UUID.randomUUID().toString().replace("-",""));
                 mmmEntity.setMatchPlanBusModelCode(mpbModel.getUuid());
                 mmmEntity.setTrackOrder(5);
@@ -225,7 +225,7 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
             }
 
             if(Objects.nonNull(cell.getSixthTracking())){
-                MatchMilepostModelEntity mmmEntity = new MatchMilepostModelEntity();
+                MatchMilepostModel mmmEntity = new MatchMilepostModel();
                 mmmEntity.setUuid(UUID.randomUUID().toString().replace("-",""));
                 mmmEntity.setMatchPlanBusModelCode(mpbModel.getUuid());
                 mmmEntity.setTrackOrder(6);
@@ -243,7 +243,7 @@ public class TrackingPolicyExcelImportTools extends ExcelImportTools<TrackingPol
             }
 
             if(Objects.nonNull(cell.getCruiseTracking())){
-                MatchMilepostModelEntity mmmEntity = new MatchMilepostModelEntity();
+                MatchMilepostModel mmmEntity = new MatchMilepostModel();
                 mmmEntity.setUuid(UUID.randomUUID().toString().replace("-",""));
                 mmmEntity.setMatchPlanBusModelCode(mpbModel.getUuid());
                 mmmEntity.setTrackOrder(7);

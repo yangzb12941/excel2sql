@@ -86,7 +86,7 @@ public class SqlWriter2Txt {
         sqlStatement.append("values");
         sqlStatement.append("(");
         for (int i = 0; i < fieldMappings.size(); i++) {
-            sqlStatement.append("`"+fieldMappings.get(i).getValue()+"`");
+            sqlStatement.append("'"+fieldMappings.get(i).getValue()+"'");
             sqlStatement.append(",");
         }
         //去掉最后一个,号
@@ -110,13 +110,16 @@ public class SqlWriter2Txt {
             for (int i = 0; i < tableFields.length; i++) {
                 String camelCase = toCamelCase(tableFields[i]);
                 for (Method objectMethod : unionMethods ) {
-                    if (objectMethod.getName().toLowerCase().equals("get"+camelCase.toLowerCase())) {
-                        FieldMapping fieldMapping = new FieldMapping();
-                        fieldMapping.setSqlField(tableFields[i]);
-                        fieldMapping.setDataField(camelCase);
-                        fieldMapping.setValue(Objects.nonNull(objectMethod.invoke(item))?objectMethod.invoke(item).toString():null);
-                        fieldMappings.add(fieldMapping);
-                        continue;
+                    String methodName = objectMethod.getName();
+                    if(methodName.startsWith("get")){
+                        if (methodName.toLowerCase().equals("get"+camelCase.toLowerCase())) {
+                            FieldMapping fieldMapping = new FieldMapping();
+                            fieldMapping.setSqlField(tableFields[i]);
+                            fieldMapping.setDataField(camelCase);
+                            fieldMapping.setValue(Objects.nonNull(objectMethod.invoke(item))?objectMethod.invoke(item).toString():null);
+                            fieldMappings.add(fieldMapping);
+                            break;
+                        }
                     }
                 }
             }
@@ -180,6 +183,9 @@ public class SqlWriter2Txt {
         int right = sqlTemplate.indexOf(")");
         String substring = sqlTemplate.substring(left+1, right);
         String[] split = substring.split(",");
+        for (int i = 0; i < split.length; i++) {
+            split[i] = split[i].trim();
+        }
         return split;
     }
 

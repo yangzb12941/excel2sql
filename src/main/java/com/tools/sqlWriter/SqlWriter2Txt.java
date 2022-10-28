@@ -2,12 +2,10 @@ package com.tools.sqlWriter;
 
 import com.tools.FiledIndex.FieldMapping;
 import com.tools.entity.SqlModelGeneralFieldEntity;
-import com.tools.utils.TrackingPolicyExcelImportTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
